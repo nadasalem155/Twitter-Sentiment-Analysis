@@ -102,10 +102,7 @@ if st.button("🔍 Analyze Sentiment"):
 
         # Map numeric prediction back to label and color
         sentiment_map = {
-            0: ("Neutral 😐", "#FFFACD"),   # أصفر فاتح
-            1: ("Negative 😠", "#FA8072"),  # أحمر فاتح
-            2: ("Positive 😊", "#A8E6CF")   # أخضر هادئ
-        }
+            0: ("Neutral 😐", "#FFFACD"),             1: ("Negative 😠", "#FA8072"),             2: ("Positive 😊", "#A8E6CF")          }
         sentiment_label, box_color = sentiment_map.get(prediction, ("Unknown", "#FFFFFF"))
 
         # Display prediction result with custom color box and bigger text
