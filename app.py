@@ -106,13 +106,13 @@ if st.button("🔍 Analyze Sentiment"):
             1: ("Negative 😠", "#FF3333"),   # Red
             2: ("Positive 😊", "#33CC33")    # Green
         }
-        sentiment_label, sentiment_color = sentiment_map.get(prediction, ("Unknown", "#000000"))
+        sentiment_label, box_color = sentiment_map.get(prediction, ("Unknown", "#CCCCCC"))
 
-        # Display prediction result with color
+        # Display prediction result with colored box and black text
         st.markdown(f"""
-        <div style="background-color:#f0f0f0; padding:15px; border-radius:10px;">
-            <h3 style="color:#333333;">🧾 Result:</h3>
-            <p style="font-size: 1.3em; color:{sentiment_color};">
+        <div style="background-color:{box_color}; padding:20px; border-radius:10px;">
+            <h3 style="color:#000000;">🧾 Result:</h3>
+            <p style="font-size: 1.3em; color:#000000;">
                 The sentiment is: <b>{sentiment_label}</b>
             </p>
         </div>
