@@ -1,27 +1,26 @@
 # =============================
 # 🎯 Sentiment Analysis App with Streamlit
 # =============================
-
+import nltk
 import streamlit as st
 import re
-import nltk
 import joblib
-import pandas as pd
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
 
 # =============================
-# 📥 Download NLTK Resources (fix for server)
+# 📥 NLTK Resources
 # =============================
-nltk.download('stopwords', download_dir='/home/appuser/nltk_data')
-nltk.download('wordnet', download_dir='/home/appuser/nltk_data')
-nltk.download('omw-1.4', download_dir='/home/appuser/nltk_data')
-nltk.download('punkt', download_dir='/home/appuser/nltk_data')
-nltk.download('averaged_perceptron_tagger', download_dir='/home/appuser/nltk_data')
+nltk_data_path = '/home/appuser/nltk_data'
+nltk.data.path.append(nltk_data_path)
 
-# Add the path so NLTK can find the resources
-nltk.data.path.append('/home/appuser/nltk_data')
+nltk.download('stopwords', download_dir=nltk_data_path)
+nltk.download('wordnet', download_dir=nltk_data_path)
+nltk.download('omw-1.4', download_dir=nltk_data_path)
+nltk.download('punkt', download_dir=nltk_data_path)
+nltk.download('averaged_perceptron_tagger', download_dir=nltk_data_path)
+nltk.download('averaged_perceptron_tagger_eng', download_dir=nltk_data_path)
 
 # =============================
 # 🧩 Helper Function: POS Tag Mapping
@@ -38,74 +37,88 @@ lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words("english"))
 
 def clean_tweet(tweet):
-    # Convert to lowercase
     tweet = str(tweet).lower()
-
-    # Remove URLs
     tweet = re.sub(r"http\S+|www.\S+", "", tweet)
-
-    # Remove mentions (@username)
     tweet = re.sub(r"@\w+", "", tweet)
-
-    # Remove hashtags symbol (#)
     tweet = re.sub(r"#", "", tweet)
-
-    # Remove punctuation and numbers
     tweet = re.sub(r"[^a-z\s]", " ", tweet)
-
-    # Remove repeated letters (e.g. cooool → cool)
     tweet = re.sub(r"(.)\1{2,}", r"\1", tweet)
-
-    # Remove extra spaces
     tweet = re.sub(r"\s+", " ", tweet).strip()
 
-    # Tokenize, remove stopwords, and lemmatize
     words = tweet.split()
     words = [
         lemmatizer.lemmatize(word, get_wordnet_pos(word))
         for word in words if word not in stop_words
     ]
-
     return " ".join(words)
 
 # =============================
 # 📦 Load Model and Vectorizer
 # =============================
 model = joblib.load("xgb_model.joblib")
-vectorizer = joblib.load("tfidf_vectorizer.pkl")  
+vectorizer = joblib.load("tfidf_vectorizer.pkl")
 
 # =============================
-# 🎨 Streamlit User Interface
+# 🎨 Streamlit Interface Styling
 # =============================
 st.set_page_config(page_title="Sentiment Classifier", page_icon="💬", layout="centered")
+
+# Custom CSS for styling
+st.markdown("""
+<style>
+body {
+    background-color: #f5f7fa;
+}
+h1 {
+    color: #4b6cb7;
+    text-align: center;
+}
+.stButton>button {
+    background-color: #4b6cb7;
+    color: white;
+    font-weight: bold;
+    height: 3em;
+    width: 100%;
+    border-radius: 10px;
+}
+.stTextArea>div>div>textarea {
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+.result-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+""", unsafe_allow_html=True)
 
 st.title("💬 Sentiment Analysis App")
 st.write("Enter a tweet or any text below to predict its sentiment (Positive / Neutral / Negative).")
 
-# Text input area
 user_input = st.text_area("✏️ Enter your text here:")
 
-# Predict button
-if st.button("🔍 Analyze Sentiment"):
+# =============================
+# 🔍 Prediction
+# =============================
+if st.button("Analyze Sentiment"):
     if user_input.strip() == "":
         st.warning("Please enter some text before analysis.")
     else:
-        # Clean the input text
         clean_text = clean_tweet(user_input)
-
-        # Transform text using the TF-IDF vectorizer
         text_vector = vectorizer.transform([clean_text])
-
-        # Predict sentiment
         prediction = model.predict(text_vector)[0]
-
-        # Map numeric prediction back to label
         sentiment_map = {0: "Neutral 😐", 1: "Negative 😠", 2: "Positive 😊"}
         sentiment_label = sentiment_map.get(prediction, "Unknown")
 
-        # Display prediction result
-        st.subheader("🧾 Result:")
-        st.success(f"The sentiment is: **{sentiment_label}**")
+        # Display in a card
+        st.markdown(f"""
+        <div class="result-card">
+            <h3>🧾 Result:</h3>
+            <p style="font-size: 1.3em;">The sentiment is: <b>{sentiment_label}</b></p>
+        </div>
+        """, unsafe_allow_html=True)
 
 # =============================
 # 🧠 Footer
