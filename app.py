@@ -12,13 +12,16 @@ from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
 
 # =============================
-# 📥 Download NLTK Resources
+# 📥 Download NLTK Resources (fix for server)
 # =============================
-nltk.download('stopwords')
-nltk.download('wordnet')
-nltk.download('omw-1.4')
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+nltk.download('stopwords', download_dir='/home/appuser/nltk_data')
+nltk.download('wordnet', download_dir='/home/appuser/nltk_data')
+nltk.download('omw-1.4', download_dir='/home/appuser/nltk_data')
+nltk.download('punkt', download_dir='/home/appuser/nltk_data')
+nltk.download('averaged_perceptron_tagger', download_dir='/home/appuser/nltk_data')
+
+# Add the path so NLTK can find the resources
+nltk.data.path.append('/home/appuser/nltk_data')
 
 # =============================
 # 🧩 Helper Function: POS Tag Mapping
