@@ -1,14 +1,10 @@
 # =============================
 # 🎯 Sentiment Analysis App with Streamlit
 # =============================
-# =============================
-# 📥 Download NLTK Resources (fix for server)
-# =============================
 import nltk
 import streamlit as st
 import re
 import joblib
-import pandas as pd
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
@@ -39,34 +35,15 @@ lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words("english"))
 
 def clean_tweet(tweet):
-    # Convert to lowercase
     tweet = str(tweet).lower()
-
-    # Remove URLs
     tweet = re.sub(r"http\S+|www.\S+", "", tweet)
-
-    # Remove mentions (@username)
     tweet = re.sub(r"@\w+", "", tweet)
-
-    # Remove hashtags symbol (#)
     tweet = re.sub(r"#", "", tweet)
-
-    # Remove punctuation and numbers
     tweet = re.sub(r"[^a-z\s]", " ", tweet)
-
-    # Remove repeated letters (e.g. cooool → cool)
     tweet = re.sub(r"(.)\1{2,}", r"\1", tweet)
-
-    # Remove extra spaces
     tweet = re.sub(r"\s+", " ", tweet).strip()
-
-    # Tokenize, remove stopwords, and lemmatize
     words = tweet.split()
-    words = [
-        lemmatizer.lemmatize(word, get_wordnet_pos(word))
-        for word in words if word not in stop_words
-    ]
-
+    words = [lemmatizer.lemmatize(word, get_wordnet_pos(word)) for word in words if word not in stop_words]
     return " ".join(words)
 
 # =============================
@@ -83,42 +60,22 @@ st.set_page_config(page_title="Sentiment Classifier", page_icon="💬", layout="
 st.title("💬 Sentiment Analysis App")
 st.write("Enter a tweet or any text below to predict its sentiment (Positive / Neutral / Negative).")
 
-# Text input area
 user_input = st.text_area("✏️ Enter your text here:")
 
-# Predict button
 if st.button("🔍 Analyze Sentiment"):
     if user_input.strip() == "":
         st.warning("Please enter some text before analysis.")
     else:
-        # Clean the input text
         clean_text = clean_tweet(user_input)
-
-        # Transform text using the TF-IDF vectorizer
         text_vector = vectorizer.transform([clean_text])
-
-        # Predict sentiment
         prediction = model.predict(text_vector)[0]
+        sentiment_map = {0: ("Neutral 😐", "#FFFF00"), 1: ("Negative 😠", "#FF0000"), 2: ("Positive 😊", "#00FF00")}
+        sentiment_label, bg_color = sentiment_map.get(prediction, ("Unknown", "#FFFFFF"))
+        
+        st.subheader("🧾 Result:")
+        st.markdown(
+            f"<div style='background-color:{bg_color}; color:#000000; padding:15px; border-radius:10px; font-size:22px;'>"
+            f"<b>{sentiment_label}</b></div>", unsafe_allow_html=True
+        )
 
-        # Map numeric prediction back to label and color
-        sentiment_map = {
-            0: ("Neutral 😐", "#FFD700"),    # Yellow
-            1: ("Negative 😠", "#FF3333"),   # Red
-            2: ("Positive 😊", "#33CC33")    # Green
-        }
-        sentiment_label, box_color = sentiment_map.get(prediction, ("Unknown", "#CCCCCC"))
-
-        # Display prediction result with colored box and black text
-        st.markdown(f"""
-        <div style="background-color:{box_color}; padding:20px; border-radius:10px;">
-            <h3 style="color:#000000;">🧾 Result:</h3>
-            <p style="font-size: 1.3em; color:#000000;">
-                The sentiment is: <b>{sentiment_label}</b>
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-# =============================
-# 🧠 Footer
-# =============================
 st.markdown("---")
