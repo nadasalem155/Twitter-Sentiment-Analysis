@@ -1,28 +1,27 @@
 # =============================
 # 🎯 Sentiment Analysis App with Streamlit
 # =============================
-# =============================
-# 📥 Download NLTK Resources (fix for server)
-# =============================
-import nltk
+
 import streamlit as st
 import re
+import nltk
 import joblib
 import pandas as pd
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
 
-# NLTK data path
-nltk_data_path = '/home/appuser/nltk_data'
-nltk.data.path.append(nltk_data_path)
+# =============================
+# 📥 Download NLTK Resources (fix for server)
+# =============================
+nltk.download('stopwords', download_dir='/home/appuser/nltk_data')
+nltk.download('wordnet', download_dir='/home/appuser/nltk_data')
+nltk.download('omw-1.4', download_dir='/home/appuser/nltk_data')
+nltk.download('punkt', download_dir='/home/appuser/nltk_data')
+nltk.download('averaged_perceptron_tagger', download_dir='/home/appuser/nltk_data')
 
-nltk.download('stopwords', download_dir=nltk_data_path)
-nltk.download('wordnet', download_dir=nltk_data_path)
-nltk.download('omw-1.4', download_dir=nltk_data_path)
-nltk.download('punkt', download_dir=nltk_data_path)
-nltk.download('averaged_perceptron_tagger', download_dir=nltk_data_path)
-nltk.download('averaged_perceptron_tagger_eng', download_dir=nltk_data_path)  
+# Add the path so NLTK can find the resources
+nltk.data.path.append('/home/appuser/nltk_data')
 
 # =============================
 # 🧩 Helper Function: POS Tag Mapping
