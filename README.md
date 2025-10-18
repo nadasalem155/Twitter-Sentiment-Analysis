@@ -9,7 +9,6 @@ The dataset used is `Tweets.csv`, which contains 27,481 tweets with their text a
 ---
 ## [🔗 **Live Streamlit App**](https://twitter-sentiment-analysis1.streamlit.app/)
 
-
 ---
 
 ## 📝 Project Workflow
@@ -68,18 +67,32 @@ Multiple models were trained for sentiment classification:
 | Random Forest          | 75.2%        |
 | XGBoost Classifier     | 71.1%        |
 
-**Chosen model for deployment:** **XGBoost Classifier**
+*Chosen model for deployment:* *XGBoost Classifier*
+---
+
+### Why XGBoost?
+During development, multiple models were evaluated:
+
+- **SVM:** Good training accuracy (~95%) but lower test accuracy (~71%), indicating overfitting.
+- **Logistic Regression:** Balanced performance (~72% test accuracy) but slightly lower precision for some classes.
+- **Random Forest:** Higher test accuracy (~75%) and better handling of class imbalance, but slower training with many trees.
+
+**XGBoost was chosen for deployment because:**
+
+- Good balance between accuracy and generalization (Test accuracy ~71% without extreme overfitting)
+- Probabilistic predictions for each class, useful for confidence estimation
+- Scalable and efficient with high-dimensional TF-IDF features
+- Robust to imbalance and noise; provides feature importance for influential words
+
+**Model Evaluation (XGBoost on test set):**
+
+- Test accuracy: 71.1%  
+- Weighted F1-score: 0.71  
+- Model shows balanced performance across all sentiment classes
 
 ---
 
-### 6️⃣ Model Evaluation
-- Test accuracy: 71.1%
-- Weighted F1-score: 0.71
-- Model shows balanced performance across all sentiment classes.
-
----
-
-### 7️⃣ Streamlit App
+### 6️⃣ Streamlit App
 - Provides an interactive interface for predicting sentiment from user input.
 - Applies the same preprocessing as in the notebook.
 - Displays prediction in a colored box:
@@ -91,13 +104,12 @@ Multiple models were trained for sentiment classification:
 ---
 
 ## 📂 Project Files
-├── Tweets.csv # Original dataset
-├── sentiment_analysis.ipynb # Jupyter Notebook with preprocessing, EDA, and model training
-├── xgb_model.joblib # Trained XGBoost model
-├── tfidf_vectorizer.pkl # Saved TF-IDF vectorizer
-├── app.py # Streamlit web app
+├── Tweets.csv # Original dataset  
+├── sentiment_analysis.ipynb # Jupyter Notebook with preprocessing, EDA, and model training  
+├── xgb_model.joblib # Trained XGBoost model  
+├── tfidf_vectorizer.pkl # Saved TF-IDF vectorizer  
+├── app.py # Streamlit web app  
 └── README.md # Project documentation
-
 
 ---
 
@@ -118,4 +130,4 @@ Multiple models were trained for sentiment classification:
 This project demonstrates a **full NLP pipeline** for Twitter sentiment analysis:  
 From data cleaning and visualization to model training, balancing classes with SMOTE, and deploying a **real-time web app**.  
 
-The app can be used for **social media monitoring, brand analysis, and public opi
+The app can be used for **social media monitoring, brand analysis, and public opinion insights**.
