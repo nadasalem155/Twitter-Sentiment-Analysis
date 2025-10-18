@@ -1,4 +1,4 @@
-# 💬 Twitter Sentiment Analysis
+# 🐦💬 Twitter Sentiment Analysis
 
 ## 📌 Project Description
 This project is a complete **Twitter Sentiment Analysis pipeline** that predicts whether a tweet is **Positive**, **Neutral**, or **Negative**.  
